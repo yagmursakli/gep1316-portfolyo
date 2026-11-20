@@ -1,5 +1,8 @@
 # hesaplayici.py - Bir anket için gereken örneklem büyüklüğünü Cochran formülüyle hesaplar
 
+# math modülünden ceil (yukarı yuvarlama) aracını alıyoruz; yarım kişiye anket yapılamaz
+from math import ceil
+
 # Beklenen oran: önceden bilinmediği için en güvenli değer olan 0.5 kullanılır (float)
 BEKLENEN_ORAN = 0.5
 
@@ -36,8 +39,11 @@ n0 = (z_degeri ** 2) * BEKLENEN_ORAN * (1 - BEKLENEN_ORAN) / (hata_payi ** 2)
 # 2. adım: Sonlu evren düzeltmesi n = n0 ÷ (1 + (n0 − 1) ÷ N)
 duzeltilmis_n = n0 / (1 + (n0 - 1) / evren)
 
-# Sonucu tam sayı kişi sayısına çeviriyoruz; yarım kişiye anket yapılamaz
-gereken_kisi = round(duzeltilmis_n)
+# Sonucu yukarı yuvarlayıp tam sayı kişi sayısına çeviriyoruz
+# DUZELTME (hata avı): Önceki satır round(duzeltilmis_n) idi. round() en yakın sayıya
+# yuvarladığı için 322,40 kişilik örneklemi 322'ye indiriyor ve gereken sayının altında
+# kalıyordu. Örneklem her zaman yukarı yuvarlanmalı; bu yüzden ceil() kullanıldı.
+gereken_kisi = ceil(duzeltilmis_n)
 
 # Karşılaştırma operatörü (>=) ile toplanan yanıtların yeterli olup olmadığını buluyoruz (bool)
 yeterli_mi = toplanan_yanit >= gereken_kisi
